@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
+	"log"
 
 	"github.com/jondot/goweight/pkg"
 )
@@ -22,6 +23,8 @@ var (
 	packages  = flag.String("packages", "", "Packages to build")
 
 	showVersion = flag.Bool("version", false, "Shows version")
+
+	existsWork = flag.String("work", "", "Exists work path")
 )
 
 func main() {
@@ -39,7 +42,15 @@ func main() {
 		weight.BuildCmd = append(weight.BuildCmd, *packages)
 	}
 
-	work := weight.BuildCurrent()
+	var work string
+	if len(*existsWork) > 0 {
+		work = *existsWork
+	} else {
+		work = weight.BuildCurrent()
+	}
+
+	log.Printf("Working on path %s\n", work)
+
 	modules := weight.Process(work)
 
 	if *jsonOutput || *jsonOutputShort {
